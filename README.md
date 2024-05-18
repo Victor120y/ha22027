@@ -1,0 +1,4 @@
+Este repositorios es para Aplicar los conocimientos obtenidos sobre los fundamentos del lenguaje ensamblador, desarrollando ejercicios que aporten una mayor compresión de los temas expuestos previamente. 
+1 - resta: es enseñar cómo realizar una operación de resta con múltiples operandos en ensamblador, convertir el resultado a formato ASCII, y luego imprimirlo en la pantalla 
+2 - multiplicación: El propósito de un programa en ensamblador que realiza la multiplicación de dos números enteros utilizando registros de 32 bits es demostrar cómo se puede realizar una operación aritmética más compleja (multiplicación) y manejar el resultado de esta operación para mostrarlo en la pantalla 
+3 - division: El propósito de este ejercicio es realizar una división de dos números enteros de 32 bits y mostrar el resultado en formato ASCII, utilizando registros de 32 bits y una subrutina para la conversión de enteros a cadenas ASCII..
