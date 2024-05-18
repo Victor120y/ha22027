@@ -1,0 +1,69 @@
+section .data
+    num1 dd 30       ; Primer número (dividendo)
+    num2 dd 2        ; Segundo número (divisor)
+    msg db "El resultado es: ", 0xA,0xD
+    len equ $ - msg
+
+section .bss
+    resultado resb 2   ; Reservar espacio para el resultado (máximo 10 dígitos más salto de línea y terminador)
+
+section .text
+global _start
+
+_start:
+    ; Cargar los números en los registros
+    mov eax, [num1]    ; Cargar el dividendo en EAX - dividiendo
+    mov ebx, [num2]    ; Cargar el divisor en EBX - divisor
+
+    ; Dividir EAX por EBX
+    xor edx, edx       ; Limpiar EDX para una división de 32 bits
+    div ebx            ; EAX = EAX / EBX, residuo en EDX
+
+    ; Convertir el resultado a ASCII (EAX contiene el cociente)
+    call convertir_ascii
+
+    ; Imprimir el mensaje
+    mov eax, 4         ; Código de la llamada al sistema sys_write
+    mov ebx, 1         ; Descriptor de archivo (stdout)
+    mov ecx, msg       ; Puntero al mensaje
+    mov edx, len       ; Longitud del mensaje
+    int 0x80           ; Llamada al sistema
+
+    ; Imprimir el resultado
+    mov eax, 4         ; Código de la llamada al sistema sys_write
+    mov ebx, 1         ; Descriptor de archivo (stdout)
+    mov ecx, resultado ; Puntero al resultado
+    mov edx, eax       ; Longitud del resultado
+    int 0x80           ; Llamada al sistema
+
+    ; Terminar el programa
+    mov eax, 1         ; Código de la llamada al sistema para salir
+    int 0x80           ; Llamada al sistema para salir
+
+; Procedimiento para convertir un número entero a una cadena ASCII
+convertir_ascii:
+    ; EAX contiene el número que queremos convertir
+    mov ecx, 10        ; Usamos ECX como divisor base
+    mov edi, resultado ; EDI apunta al buffer del resultado
+    add edi, 2         ; Apuntamos al final del buffer
+    mov byte [edi], 0  ; Terminador nulo para la cadena
+    dec edi            ; Retrocedemos una posición
+
+convert_loop:
+    xor edx, edx       ; Limpiar EDX antes de la división
+    div ecx            ; Dividir EAX por 10
+    add dl, '0'        ; Convertir el residuo a ASCII
+    mov [edi], dl      ; Almacenar el dígito ASCII
+    dec edi            ; Retroceder una posición en el buffer
+    test eax, eax      ; ¿Es EAX cero?
+    jnz convert_loop   ; Si no es cero, continuar el bucle
+
+    ; Calculamos la longitud de la cadena resultante
+    lea eax, [resultado + 1]
+    sub eax, edi
+    dec eax            ; Ajustar para el terminador nulo
+    ret
+
+
+    ret
+

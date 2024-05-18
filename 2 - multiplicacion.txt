@@ -1,0 +1,52 @@
+;Escriba un programa para multiplicar dos números enteros, usando registros de 8 bits section .data
+;Me apoye con el dato que compartio en clase. 
+
+section .data
+    x db 3          ; Número 1 - multiplicador
+    y db 3          ; Número 2 - multiplicando
+    msg db "Resultado de la multiplicación: ", 0xD
+    len equ $ - msg
+
+section .bss
+    resultado resb 2   ; Almacenará el resultado de la multiplicación
+
+section .text
+global _start
+
+_start:
+    ; Cargar los números en los registros
+    mov al, [x]     ; Número 1 en AL
+    mov bl, [y]     ; Número 2 en BL
+
+    ; Multiplicar AL y BL
+    mul bl          ; AX = AL * BL, resultado en AX
+    
+    ; Convertir el resultado a ASCII
+    mov ah, 0 ;limpiamos ah 
+    mov bl, 10 
+    div bl
+    
+    add ax, '0'
+    add ah, '0'
+
+    ; Almacenar el resultado en result
+    mov [resultado], ax
+    mov [resultado +1], ah
+
+    ; Imprimir el mensaje
+    mov eax, 4      ; Código de la llamada al sistema sys_write
+    mov ebx, 1      ; Descriptor de archivo (stdout)
+    mov ecx, msg    ; Apuntar al mensaje
+    mov edx, len    ; Longitud del mensaje
+    int 0x80        ; Llamada al sistema
+
+    ; Imprimir el resultado
+    mov eax, 4      ; Código de la llamada al sistema sys_write
+    mov ebx, 1      ; Descriptor de archivo (stdout)
+    mov ecx, resultado ; El resultado está en result
+    mov edx, 2      ; Longitud del resultado (un solo carácter)
+    int 0x80        ; Llamada al sistema
+
+    ; Terminar el programa
+    mov eax, 1      ; Código de la llamada al sistema para salir
+    int 0x80        ; Llamada al sistema para salir
